@@ -5,7 +5,7 @@ trigger:
 
 variables:
   nodeVersion: '20.x'
-  appLocation: '/' # Location of your React app code
+  appLocation: '/src' # Updated to point to the src directory where React code is
   outputLocation: 'build' # React build output directory
   apiLocation: '' # Leave empty as this is frontend only
 
@@ -18,19 +18,38 @@ steps:
     versionSpec: '$(nodeVersion)'
   displayName: 'Install Node.js'
 
+# Add diagnostic step to verify build directory
 - script: |
+    pwd
+    ls -la
+    echo "Changing to src directory..."
+    cd src
+    ls -la
+  displayName: 'List Working Directory'
+
+- script: |
+    cd src
     npm install
     npm run build
   displayName: 'npm install and build'
 
-# Verify environment before deployment
+# Verify build output
 - script: |
-    echo "Checking deployment environment..."
-    echo "App Location: $(appLocation)"
-    echo "Output Location: $(outputLocation)"
-    echo "Node Version: $(nodeVersion)"
-    echo "Deployment token is set: $([[ ! -z '$(deployment_token)' ]] && echo 'Yes' || echo 'No')"
-  displayName: 'Verify Deployment Environment'
+    echo "Checking build output..."
+    cd src
+    ls -la
+    ls -la build || echo "Build directory not found!"
+  displayName: 'Verify Build Output'
+
+# Verify deployment variables
+- script: |
+    echo "Checking deployment configuration..."
+    echo "Current directory: $(pwd)"
+    echo "App Location exists: $([[ -d "src" ]] && echo 'Yes' || echo 'No')"
+    echo "Build directory exists: $([[ -d "src/build" ]] && echo 'Yes' || echo 'No')"
+    echo "Token is set: $([[ ! -z "$(deployment_token)" ]] && echo 'Yes' || echo 'No')"
+    echo "Token length: ${#deployment_token}"
+  displayName: 'Verify Deployment Configuration'
 
 - task: AzureStaticWebApp@0
   inputs:
