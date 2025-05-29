@@ -27,13 +27,11 @@ steps:
     versionSpec: '20.x'
   displayName: 'Install Node.js'
 
-- task: NuGetToolInstaller@1
-  displayName: 'Install NuGet'
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
-  displayName: 'NuGet restore'
+    command: 'restore'
+    projects: '$(solution)'
+  displayName: 'dotnet restore'
 
 - script: |
     npm install
