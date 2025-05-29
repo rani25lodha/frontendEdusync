@@ -24,11 +24,17 @@ steps:
     pwd
     ls -la
     echo "Verifying package.json exists..."
-    cat package.json
+    if [ -f "package.json" ]; then
+      echo "package.json found"
+      cat package.json
+    else
+      echo "package.json NOT found!"
+      exit 1
+    fi
   displayName: 'List Working Directory'
 
 - script: |
-    npm install
+    npm ci # Use npm ci instead of npm install for CI environments
     npm run build
   displayName: 'npm install and build'
 
@@ -36,17 +42,23 @@ steps:
 - script: |
     echo "Checking build output..."
     ls -la
-    ls -la build || echo "Build directory not found!"
+    if [ -d "build" ]; then
+      echo "Build directory found:"
+      ls -la build
+    else
+      echo "Build directory not found!"
+      exit 1
+    fi
   displayName: 'Verify Build Output'
 
-# Verify deployment variables
+# Verify deployment variables (without exposing sensitive data)
 - script: |
     echo "Checking deployment configuration..."
     echo "Current directory: $(pwd)"
     echo "Package.json exists: $([[ -f "package.json" ]] && echo 'Yes' || echo 'No')"
     echo "Build directory exists: $([[ -d "build" ]] && echo 'Yes' || echo 'No')"
-    echo "Token is set: $([[ ! -z "$(deployment_token)" ]] && echo 'Yes' || echo 'No')"
-    echo "Token length: ${#deployment_token}"
+    # Don't echo the actual token for security
+    echo "Token is configured: $([[ ! -z "$(deployment_token)" ]] && echo 'Yes' || echo 'No')"
   displayName: 'Verify Deployment Configuration'
 
 - task: AzureStaticWebApp@0
@@ -55,8 +67,7 @@ steps:
     app_location: $(appLocation)
     output_location: $(outputLocation)
     api_location: $(apiLocation)
-    skip_app_build: false
+    skip_app_build: true # Set to true since we're building above
     verbose: true
   displayName: 'Deploy to Azure Static Web App'
-  env:
-    DEBUG: 'true' 
+  condition: and(succeeded(), ne(variables['deployment_token'], ''))
