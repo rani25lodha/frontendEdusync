@@ -1,90 +1,27 @@
-# ASP.NET Core with React
-# Build and test ASP.NET Core project and deploy
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-name: Azure Static Web App CI/CD
+name: Frontend Azure Static Web App CI/CD
 
 trigger:
 - main
 
 variables:
-  solution: 'EduSync_Assessment.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  dotnetVersion: '7.0.x'  # Explicitly specify .NET version
-  # The deployment_token is configured in Azure Pipeline variables
-  # Do not define the token here for security reasons
   nodeVersion: '20.x'
-  appLocation: '/' # Location of your app code
-  outputLocation: 'build' # Built app content directory
-  apiLocation: '' # Leave empty if no API
+  appLocation: '/' # Location of your React app code
+  outputLocation: 'build' # React build output directory
+  apiLocation: '' # Leave empty as this is frontend only
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseDotNet@2
-  inputs:
-    version: '$(dotnetVersion)'
-    includePreviewVersions: false
-  displayName: 'Install .NET SDK'
-
 - task: NodeTool@0
   inputs:
     versionSpec: '$(nodeVersion)'
   displayName: 'Install Node.js'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '$(solution)'
-    feedsToUse: 'select'
-  displayName: 'dotnet restore'
-
 - script: |
-    cd EduSync_Assessment
     npm install
     npm run build
   displayName: 'npm install and build'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: |
-      EduSync_Assessment/EduSync_Assessment.csproj
-      EduSync_Assessment.Tests/EduSync_Assessment.Tests.csproj
-    arguments: '--configuration $(buildConfiguration) --no-restore'
-  displayName: 'dotnet build'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: 'EduSync_Assessment.Tests/EduSync_Assessment.Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build'
-  displayName: 'dotnet test'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'EduSync_Assessment/EduSync_Assessment.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: true
-  displayName: 'dotnet publish'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'drop'
-  displayName: 'Publish artifacts'
-
-# Example of using the deployment token securely
-- script: |
-    echo "Using deployment token securely"
-    # Access the token using $(DEPLOYMENT_TOKEN)
-    # Example: dotnet nuget push *.nupkg --api-key $(DEPLOYMENT_TOKEN)
-  env:
-    DEPLOYMENT_TOKEN: $(deployment_token)  # Reference the variable securely
-  displayName: 'Deploy with token'
 
 - task: AzureStaticWebApp@0
   inputs:
@@ -92,4 +29,5 @@ steps:
     app_location: $(appLocation)
     output_location: $(outputLocation)
     api_location: $(apiLocation)
+    skip_app_build: false
   displayName: 'Deploy to Azure Static Web App' 
