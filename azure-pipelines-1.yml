@@ -23,6 +23,15 @@ steps:
     npm run build
   displayName: 'npm install and build'
 
+# Verify environment before deployment
+- script: |
+    echo "Checking deployment environment..."
+    echo "App Location: $(appLocation)"
+    echo "Output Location: $(outputLocation)"
+    echo "Node Version: $(nodeVersion)"
+    echo "Deployment token is set: $([[ ! -z '$(deployment_token)' ]] && echo 'Yes' || echo 'No')"
+  displayName: 'Verify Deployment Environment'
+
 - task: AzureStaticWebApp@0
   inputs:
     azure_static_web_apps_api_token: $(deployment_token)
@@ -30,4 +39,7 @@ steps:
     output_location: $(outputLocation)
     api_location: $(apiLocation)
     skip_app_build: false
-  displayName: 'Deploy to Azure Static Web App' 
+    verbose: true
+  displayName: 'Deploy to Azure Static Web App'
+  env:
+    DEBUG: 'true' 
