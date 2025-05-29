@@ -9,6 +9,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  dotnetVersion: '7.0.x'  # Explicitly specify .NET version
   # The deployment_token is configured in Azure Pipeline variables
   # Do not define the token here for security reasons
 
@@ -18,9 +19,9 @@ pool:
 steps:
 - task: UseDotNet@2
   inputs:
-    version: '7.x'
-    includePreviewVersions: true
-  displayName: 'Install .NET Core SDK'
+    version: '$(dotnetVersion)'
+    includePreviewVersions: false
+  displayName: 'Install .NET SDK'
 
 - task: NodeTool@0
   inputs:
@@ -31,6 +32,7 @@ steps:
   inputs:
     command: 'restore'
     projects: '$(solution)'
+    feedsToUse: 'select'
   displayName: 'dotnet restore'
 
 - script: |
@@ -43,21 +45,21 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
   displayName: 'dotnet build'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
     projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '--configuration $(buildConfiguration) --no-build'
   displayName: 'dotnet test'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: true
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
   displayName: 'dotnet publish'
 
