@@ -8,7 +8,7 @@ variables:
 - name: nodeVersion
   value: '20.x'
 - name: appLocation
-  value: '/' # Root of your app
+  value: '.' # Root of your app
 - name: outputLocation
   value: 'build' # React build output directory
 - name: apiLocation
@@ -25,7 +25,7 @@ steps:
 
 # Add diagnostic step to verify directory structure
 - script: |
-    echo "Current directory structure:"
+    echo "Current directory structure before build:"
     pwd
     ls -la
     echo "Verifying package.json exists..."
@@ -39,7 +39,7 @@ steps:
   displayName: 'List Working Directory'
 
 - script: |
-    echo "Current directory structure:"
+    echo "Current directory structure before build:"
     pwd
     ls -la
     npm ci
@@ -54,29 +54,31 @@ steps:
     echo "Checking for index.html:"
     if [ -f "build/index.html" ]; then
       echo "index.html found in build directory"
+      cp -r build/* .  # Copy build contents to root for deployment
     else
       echo "index.html NOT found in build directory!"
       exit 1
     fi
-  displayName: 'Verify Build Output'
+    echo "Final deployment directory structure:"
+    ls -la
+  displayName: 'Verify Build Output and Prepare Deployment'
 
 # Verify deployment variables (without exposing sensitive data)
 - script: |
     echo "Checking deployment configuration..."
     echo "Current directory: $(pwd)"
     echo "Package.json exists: $([[ -f "package.json" ]] && echo 'Yes' || echo 'No')"
-    echo "Build directory exists: $([[ -d "build" ]] && echo 'Yes' || echo 'No')"
-    # Don't echo the actual token for security
+    echo "index.html exists in root: $([[ -f "index.html" ]] && echo 'Yes' || echo 'No')"
     echo "Token is configured: $([[ ! -z "$(deployment)" ]] && echo 'Yes' || echo 'No')"
   displayName: 'Verify Deployment Configuration'
 
 - task: AzureStaticWebApp@0
   inputs:
     azure_static_web_apps_api_token: $(deployment)
-    app_location: '/'
-    output_location: 'build'
+    app_location: '.'
+    output_location: '.'  # Since we copied build files to root
     api_location: ''
-    skip_app_build: true # We're building the app in previous steps
+    skip_app_build: true
     verbose: true
   displayName: 'Deploy to Azure Static Web App'
   condition: and(succeeded(), ne(variables['deployment'], ''))
