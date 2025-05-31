@@ -1,6 +1,6 @@
-
 import React, { useState } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const UploadCourse = () => {
   const [title, setTitle] = useState("");
@@ -111,7 +111,7 @@ const UploadCourse = () => {
         setUploadProgress(25);
 
         // Upload file to Azure Blob Storage
-        uploadResponse = await api.post("/File/upload", formData, {
+        uploadResponse = await api.post(API_CONFIG.ENDPOINTS.FILE.UPLOAD, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -138,7 +138,7 @@ const UploadCourse = () => {
           title: title.trim(),
         };
 
-        uploadResponse = await api.post("/File/upload-url", urlData, {
+        uploadResponse = await api.post(API_CONFIG.ENDPOINTS.FILE.UPLOAD_URL, urlData, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -162,7 +162,7 @@ const UploadCourse = () => {
         mediaType: uploadResponse?.data?.type || mediaMode, // Store whether it's a file or URL
       };
 
-      await api.post("/CourseTables", courseData);
+      await api.post(API_CONFIG.ENDPOINTS.COURSES.BASE, courseData);
       setUploadProgress(100);
 
       alert("Course uploaded successfully!");

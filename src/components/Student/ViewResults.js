@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const getUserIdFromToken = () => {
   const token = localStorage.getItem("token");
@@ -59,21 +60,21 @@ const ViewResults = () => {
       setLoading(true);
 
       try {
-        const [resultsRes, assessmentsRes, coursesRes] = await Promise.all([
-          api.get("/ResultTables"),
-          api.get("/AssessmentTables"),
-          api.get("/CourseTables"),
+        const [resultsResponse, assessmentsResponse, coursesResponse] = await Promise.all([
+          api.get(API_CONFIG.ENDPOINTS.ASSESSMENTS.RESULTS),
+          api.get(API_CONFIG.ENDPOINTS.ASSESSMENTS.BASE),
+          api.get(API_CONFIG.ENDPOINTS.COURSES.BASE)
         ]);
 
-        const userResults = resultsRes.data.filter(
+        const userResults = resultsResponse.data.filter(
           (r) => String(r.userId) === String(userId)
         );
 
         const assessmentMap = {};
-        assessmentsRes.data.forEach((a) => (assessmentMap[a.assessmentId] = a));
+        assessmentsResponse.data.forEach((a) => (assessmentMap[a.assessmentId] = a));
 
         const courseMap = {};
-        coursesRes.data.forEach((c) => (courseMap[c.courseId] = c));
+        coursesResponse.data.forEach((c) => (courseMap[c.courseId] = c));
 
         setResults(userResults);
         setAssessments(assessmentMap);

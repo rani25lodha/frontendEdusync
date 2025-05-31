@@ -11,8 +11,8 @@ const ViewStudentResults = () => {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const instructorId = localStorage.getItem('instructorId');
-        const response = await api.get(`${API_CONFIG.ENDPOINTS.RESULTS.INSTRUCTOR}/${instructorId}`);
+        const instructorId = localStorage.getItem('userId');
+        const response = await api.get(`${API_CONFIG.ENDPOINTS.ASSESSMENTS.INSTRUCTOR_RESULTS}/${instructorId}`);
         setResults(response.data);
         setLoading(false);
       } catch (error) {

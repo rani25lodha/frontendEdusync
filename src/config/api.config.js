@@ -9,12 +9,20 @@ export const API_CONFIG = {
             RESET_PASSWORD: '/api/Auth/reset-password'
         },
         COURSES: {
-            BASE: '/api/CourseTables',
-            UPLOAD: '/api/File/upload'
+            BASE: '/api/Course',
+            UPLOAD: '/api/Course/upload',
+            UPLOAD_URL: '/api/Course/upload-url',
+            INSTRUCTOR: '/api/Course/instructor'
         },
         ASSESSMENTS: {
-            BASE: '/api/AssessmentTables',
-            RESULTS: '/api/ResultTables'
+            BASE: '/api/Assessment',
+            RESULTS: '/api/Assessment/results',
+            INSTRUCTOR_RESULTS: '/api/Assessment/results/instructor',
+            STUDENT_RESULTS: '/api/Assessment/results/student'
+        },
+        FILE: {
+            UPLOAD: '/api/File/upload',
+            UPLOAD_URL: '/api/File/upload-url'
         }
     }
 }; 
