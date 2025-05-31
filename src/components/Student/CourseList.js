@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const CourseList = ({ onSelectCourse }) => {
   const [courses, setCourses] = useState([]);
@@ -10,7 +11,7 @@ const CourseList = ({ onSelectCourse }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await api.get("/CourseTables");
+        const res = await api.get(API_CONFIG.ENDPOINTS.COURSES.BASE);
         console.log("📘 Fetched courses:", res.data);
         setCourses(res.data);
       } catch (err) {

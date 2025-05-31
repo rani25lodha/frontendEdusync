@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
+import { API_CONFIG } from '../../config/api.config';
 
 const toPascalCase = (text) =>
   text
@@ -17,7 +18,7 @@ const StudentAssessmentList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await api.get("/CourseTables");
+        const res = await api.get(API_CONFIG.ENDPOINTS.COURSES.BASE);
         setCourses(res.data);
         setFilteredCourses(res.data);
       } catch {
@@ -31,7 +32,7 @@ const StudentAssessmentList = () => {
     if (!selectedCourse) return;
     const fetchAssessments = async () => {
       try {
-        const res = await api.get("/AssessmentTables");
+        const res = await api.get(API_CONFIG.ENDPOINTS.ASSESSMENTS.BASE);
         const filtered = res.data.filter(
           (a) => a.courseId === selectedCourse.courseId
         );

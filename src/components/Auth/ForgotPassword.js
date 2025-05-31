@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { API_CONFIG } from '../../config/api.config';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const ForgotPassword = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/Auth/forgot-password', { email });
+      const response = await api.post(API_CONFIG.ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
       setToken(response.data.token);
       setMessage(response.data.message);
       setStep(2);
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/Auth/reset-password', {
+      const response = await api.post(API_CONFIG.ENDPOINTS.AUTH.RESET_PASSWORD, {
         token,
         newPassword,
       });

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../../services/api";
 import { useNavigate, Link } from "react-router-dom";
+import { API_CONFIG } from '../../config/api.config';
 
 
 function Register() {
@@ -9,11 +10,13 @@ function Register() {
   const [passwordHash, setPassword] = useState("");
   const [role, setRole] = useState("Student");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/UserTables", {
+      setLoading(true);
+      await api.post(API_CONFIG.ENDPOINTS.AUTH.REGISTER, {
         name,
         email,
         passwordHash,
@@ -24,6 +27,8 @@ function Register() {
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 

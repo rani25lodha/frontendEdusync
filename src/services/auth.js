@@ -35,7 +35,7 @@ export const clearToken = () => {
   localStorage.removeItem("token");
 };
 
-// Extract user role from JWT token stored in localStorage
+// Extract user role from JWT token stored in localStorage    
 // export const getUserRole = () => {
 //   const token = getToken();
 //   if (!token) return null;

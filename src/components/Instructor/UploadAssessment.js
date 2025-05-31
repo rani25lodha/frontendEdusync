@@ -1,171 +1,6 @@
-// import React, { useState, useEffect } from "react";
-// import api from "../../services/api";
-
-// const UploadAssessment = () => {
-//   const [title, setTitle] = useState("");
-//   const [courseId, setCourseId] = useState("");
-//   const [questions, setQuestions] = useState("");
-//   const [maxScore, setMaxScore] = useState(0);
-//   const [courses, setCourses] = useState([]);
-//   const instructorId = localStorage.getItem("userId");
-
-//   const exampleJson = `[{"question":"What is 2+2?","options":["3","4","5"],"answer":"4"}]`;
-
-//   useEffect(() => {
-//     const fetchCourses = async () => {
-//       try {
-//         const response = await api.get(
-//           `/CourseTables/by-instructor/${instructorId}`
-//         );
-//         setCourses(response.data);
-//       } catch (error) {
-//         console.error("Failed to fetch courses:", error);
-//       }
-//     };
-//     fetchCourses();
-//   }, [instructorId]);
-
-//   // Update max score whenever questions input changes
-//   const handleQuestionsChange = (e) => {
-//     const value = e.target.value;
-//     setQuestions(value);
-
-//     try {
-//       const parsed = JSON.parse(value);
-//       if (Array.isArray(parsed)) {
-//         setMaxScore(parsed.length);
-//       } else {
-//         setMaxScore(0);
-//       }
-//     } catch {
-//       setMaxScore(0);
-//     }
-//   };
-
-//   const handleUpload = async (e) => {
-//     e.preventDefault();
-
-//     let parsedQuestions;
-//     try {
-//       parsedQuestions = JSON.parse(questions);
-//     } catch {
-//       alert("❌ Questions field contains invalid JSON.");
-//       return;
-//     }
-
-//     if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
-//       alert("❌ Questions must be a non-empty array.");
-//       return;
-//     }
-
-//     if (!courseId) {
-//       alert("❌ Please select a course.");
-//       return;
-//     }
-
-//     // Add question numbers
-//     const numberedQuestions = parsedQuestions.map((q, index) => ({
-//       ...q,
-//       number: `Q${index + 1}`,
-//     }));
-
-//     const payload = {
-//       title: title.trim(),
-//       courseId,
-//       questions: JSON.stringify(numberedQuestions),
-//       maxScore: numberedQuestions.length,
-//     };
-
-//     try {
-//       await api.post("/AssessmentTables", payload);
-//       alert("✅ Assessment uploaded successfully.");
-//       setTitle("");
-//       setCourseId("");
-//       setQuestions("");
-//       setMaxScore(0);
-//     } catch (error) {
-//       console.error("❌ Upload failed:", error.response?.data || error.message);
-//       alert("❌ Failed to upload assessment. See console for details.");
-//     }
-//   };
-
-//   return (
-//     <div className="d-flex justify-content-center align-items-center mt-5 mb-5">
-//       <div
-//         className="card p-4 shadow-lg"
-//         style={{ maxWidth: "700px", width: "100%" }}
-//       >
-//         <h3 className="text-center text-primary mb-4">Upload Assessment</h3>
-//         <form onSubmit={handleUpload}>
-//           <div className="mb-3">
-//             <label className="form-label">Title</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               value={title}
-//               onChange={(e) => setTitle(e.target.value)}
-//               required
-//               placeholder="Enter assessment title"
-//             />
-//           </div>
-
-//           <div className="mb-3">
-//             <label className="form-label">Course</label>
-//             <select
-//               className="form-control"
-//               value={courseId}
-//               onChange={(e) => setCourseId(e.target.value)}
-//               required
-//             >
-//               <option value="">Select a course</option>
-//               {courses.map((course) => (
-//                 <option key={course.courseId} value={course.courseId}>
-//                   {course.title}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           <div className="mb-3">
-//             <label className="form-label">Questions (JSON format)</label>
-//             <textarea
-//               className="form-control"
-//               rows={6}
-//               value={questions}
-//               onChange={handleQuestionsChange}
-//               required
-//               placeholder='[{"question":"...","options":["A","B","C"],"answer":"B"}]'
-//             />
-//             <small className="form-text text-muted">
-//               Example: {exampleJson}
-//             </small>
-//           </div>
-
-//           <div className="mb-3">
-//             <label className="form-label">Max Score</label>
-//             <input
-//               type="number"
-//               className="form-control"
-//               value={maxScore}
-//               readOnly
-//               placeholder="Auto-calculated"
-//             />
-//           </div>
-
-//           <div className="d-grid">
-//             <button className="btn btn-primary" type="submit">
-//               Upload Assessment
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default UploadAssessment;
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const UploadAssessment = () => {
   const [title, setTitle] = useState("");
@@ -180,9 +15,7 @@ const UploadAssessment = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await api.get(
-          `/CourseTables/by-instructor/${instructorId}`
-        );
+        const response = await api.get(API_CONFIG.ENDPOINTS.COURSES.BASE);
         setCourses(response.data);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -257,7 +90,7 @@ const UploadAssessment = () => {
     };
 
     try {
-      await api.post("/AssessmentTables", payload);
+      await api.post(API_CONFIG.ENDPOINTS.ASSESSMENTS.BASE, payload);
       alert("✅ Assessment uploaded successfully.");
       setTitle("");
       setCourseId("");

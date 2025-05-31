@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const toPascalCase = (str) =>
   str
@@ -29,7 +30,7 @@ const InstructorCourseList = () => {
   const fetchCourses = async () => {
     try {
       const instructorId = localStorage.getItem("userId");
-      const res = await api.get(`/courseTables/by-instructor/${instructorId}`);
+      const res = await api.get(`${API_CONFIG.ENDPOINTS.COURSES.INSTRUCTOR}/${instructorId}`);
       setCourses(res.data);
     } catch (err) {
       console.error("Error fetching courses:", err);
@@ -44,7 +45,7 @@ const InstructorCourseList = () => {
   const handleDelete = async (courseId) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
-        await api.delete(`/courseTables/${courseId}`);
+        await api.delete(`${API_CONFIG.ENDPOINTS.COURSES.BASE}/${courseId}`);
         setCourses((prev) =>
           prev.filter((course) => course.courseId !== courseId)
         );
@@ -201,7 +202,7 @@ const InstructorCourseList = () => {
       setUploadProgress(0);
 
       // Use the correct endpoint from your controller
-      const response = await api.post("/courseTables/upload", uploadFormData, {
+      const response = await api.post(API_CONFIG.ENDPOINTS.COURSES.UPLOAD, uploadFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -267,7 +268,7 @@ const InstructorCourseList = () => {
         mediaUrl: mediaUrl,
       };
 
-      await api.put(`/courseTables/${editingCourse.courseId}`, updateData);
+      await api.put(`${API_CONFIG.ENDPOINTS.COURSES.BASE}/${editingCourse.courseId}`, updateData);
 
       // Update the course in the local state
       setCourses((prev) =>

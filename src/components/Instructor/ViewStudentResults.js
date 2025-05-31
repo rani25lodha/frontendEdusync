@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { API_CONFIG } from '../../config/api.config';
 import Layout from '../shared/Layout';
 
 const ViewStudentResults = () => {
@@ -11,7 +12,7 @@ const ViewStudentResults = () => {
     const fetchResults = async () => {
       try {
         const instructorId = localStorage.getItem('instructorId');
-        const response = await api.get(`/ResultTables/by-instructor/${instructorId}`);
+        const response = await api.get(`${API_CONFIG.ENDPOINTS.RESULTS.INSTRUCTOR}/${instructorId}`);
         setResults(response.data);
         setLoading(false);
       } catch (error) {
