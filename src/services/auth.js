@@ -1,8 +1,9 @@
 import api from "./api";
+import { API_CONFIG } from '../config/api.config';
 
   // Login function that returns the response data with token and user info
 export const login = async (credentials) => {
-  const response = await api.post("/Auth/login", credentials);
+  const response = await api.post(API_CONFIG.ENDPOINTS.AUTH.LOGIN, credentials);
   const { token, user } = response.data;
 
   setToken(token);
@@ -14,7 +15,7 @@ export const login = async (credentials) => {
     const capitalizedName =
       user.name.charAt(0).toUpperCase() + user.name.slice(1);
     localStorage.setItem("username", capitalizedName);
-  } // <-- ADD THIS LINE
+  }
 
   return response.data;
 };
