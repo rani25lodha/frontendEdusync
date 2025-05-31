@@ -7,7 +7,7 @@ import { API_CONFIG } from '../../config/api.config';
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [passwordHash, setPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState("Student");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ function Register() {
       await api.post(API_CONFIG.ENDPOINTS.AUTH.REGISTER, {
         name,
         email,
-        passwordHash,
+        password,
         role,
       });
       alert("Registration successful! You can now log in.");
@@ -76,7 +76,7 @@ function Register() {
             <input
               className="form-control"
               type="password"
-              value={passwordHash}
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
@@ -94,8 +94,17 @@ function Register() {
               <option value="Instructor">Instructor</option>
             </select>
           </div>
-          <button className="btn btn-primary w-100" type="submit">
-            <i className="bi bi-person-plus me-2"></i>Register
+          <button className="btn btn-primary w-100" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Registering...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-person-plus me-2"></i>Register
+              </>
+            )}
           </button>
         </form>
         <p className="text-center mt-3 mb-0">
