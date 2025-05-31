@@ -2,7 +2,7 @@ import api from "./api";
 
   // Login function that returns the response data with token and user info
 export const login = async (credentials) => {
-  const response = await api.post("/api/Auth/login", credentials);
+  const response = await api.post("/Auth/login", credentials);
   const { token, user } = response.data;
 
   setToken(token);
