@@ -111,7 +111,7 @@ const UploadCourse = () => {
         setUploadProgress(25);
 
         // Upload file to Azure Blob Storage
-        uploadResponse = await api.post(API_CONFIG.ENDPOINTS.FILE.UPLOAD, formData, {
+        uploadResponse = await api.post(API_CONFIG.ENDPOINTS.COURSES.UPLOAD, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

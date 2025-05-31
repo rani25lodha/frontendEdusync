@@ -9,20 +9,26 @@ export const API_CONFIG = {
             RESET_PASSWORD: '/api/Auth/reset-password'
         },
         COURSES: {
-            BASE: '/api/Course',
-            UPLOAD: '/api/Course/upload',
-            UPLOAD_URL: '/api/Course/upload-url',
-            INSTRUCTOR: '/api/Course/instructor'
+            BASE: '/api/CourseTables',
+            UPLOAD: '/api/CourseTables/upload',
+            UPLOAD_URL: '/api/File/upload-url',
+            INSTRUCTOR: '/api/CourseTables/by-instructor'
         },
         ASSESSMENTS: {
-            BASE: '/api/Assessment',
-            RESULTS: '/api/Assessment/results',
-            INSTRUCTOR_RESULTS: '/api/Assessment/results/instructor',
-            STUDENT_RESULTS: '/api/Assessment/results/student'
+            BASE: '/api/AssessmentTables',
+            BY_INSTRUCTOR: '/api/AssessmentTables/by-instructor',
+            RESULTS: '/api/ResultTables',
+            INSTRUCTOR_RESULTS: '/api/ResultTables/by-instructor'
         },
         FILE: {
             UPLOAD: '/api/File/upload',
-            UPLOAD_URL: '/api/File/upload-url'
+            UPLOAD_URL: '/api/File/upload-url',
+            DELETE: '/api/File/delete',
+            EXISTS: '/api/File/exists',
+            GET_ORIGINAL_URL: '/api/File/get-original-url'
+        },
+        USERS: {
+            BASE: '/api/UserTables'
         }
     }
 }; 
