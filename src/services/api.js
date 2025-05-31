@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-baseURL: "https://webappedusync-b6d0axeqeeg0gsfg.centralindia-01.azurewebsites.net/api",
+baseURL: "https://webappedusync-b6d0axeqeeg0gsfg.centralindia-01.azurewebsites.net",
 });
 
 // Optional: Add interceptor if needed
