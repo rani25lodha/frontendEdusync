@@ -1,0 +1,73 @@
+name: Frontend Azure Static Web App CI/CD
+
+trigger:
+- main
+
+variables:
+  nodeVersion: '20.x'
+  appLocation: '.' # Location of your React app code (root directory)
+  outputLocation: 'build' # React build output directory
+  apiLocation: '' # Leave empty as this is frontend only
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '$(nodeVersion)'
+  displayName: 'Install Node.js'
+
+# Add diagnostic step to verify directory structure
+- script: |
+    echo "Checking repository structure..."
+    pwd
+    ls -la
+    echo "Verifying package.json exists..."
+    if [ -f "package.json" ]; then
+      echo "package.json found"
+      cat package.json
+    else
+      echo "package.json NOT found!"
+      exit 1
+    fi
+  displayName: 'List Working Directory'
+
+- script: |
+    npm ci # Use npm ci instead of npm install for CI environments
+    npm run build
+  displayName: 'npm install and build'
+
+# Verify build output
+- script: |
+    echo "Checking build output..."
+    ls -la
+    if [ -d "build" ]; then
+      echo "Build directory found:"
+      ls -la build
+    else
+      echo "Build directory not found!"
+      exit 1
+    fi
+  displayName: 'Verify Build Output'
+
+# Verify deployment variables (without exposing sensitive data)
+- script: |
+    echo "Checking deployment configuration..."
+    echo "Current directory: $(pwd)"
+    echo "Package.json exists: $([[ -f "package.json" ]] && echo 'Yes' || echo 'No')"
+    echo "Build directory exists: $([[ -d "build" ]] && echo 'Yes' || echo 'No')"
+    # Don't echo the actual token for security
+    echo "Token is configured: $([[ ! -z "$(deployment_token)" ]] && echo 'Yes' || echo 'No')"
+  displayName: 'Verify Deployment Configuration'
+
+- task: AzureStaticWebApp@0
+  inputs:
+    azure_static_web_apps_api_token: $(deployment_token)
+    app_location: $(appLocation)
+    output_location: $(outputLocation)
+    api_location: $(apiLocation)
+    skip_app_build: true # Set to true since we're building above
+    verbose: true
+  displayName: 'Deploy to Azure Static Web App'
+  condition: and(succeeded(), ne(variables['deployment_token'], ''))
