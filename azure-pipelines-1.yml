@@ -5,7 +5,7 @@ trigger:
 
 variables:
   nodeVersion: '20.x'
-  appLocation: '.' # Location of your React app code (root directory)
+  appLocation: '/' # Root of your app
   outputLocation: 'build' # React build output directory
   apiLocation: '' # Leave empty as this is frontend only
 
@@ -34,19 +34,18 @@ steps:
   displayName: 'List Working Directory'
 
 - script: |
-    npm ci # Use npm ci instead of npm install for CI environments
+    npm ci
     npm run build
   displayName: 'npm install and build'
 
-# Verify build output
 - script: |
-    echo "Checking build output..."
-    ls -la
-    if [ -d "build" ]; then
-      echo "Build directory found:"
-      ls -la build
+    echo "Verifying build output structure:"
+    ls -la build/
+    echo "Checking for index.html:"
+    if [ -f "build/index.html" ]; then
+      echo "index.html found in build directory"
     else
-      echo "Build directory not found!"
+      echo "index.html NOT found in build directory!"
       exit 1
     fi
   displayName: 'Verify Build Output'
@@ -58,16 +57,16 @@ steps:
     echo "Package.json exists: $([[ -f "package.json" ]] && echo 'Yes' || echo 'No')"
     echo "Build directory exists: $([[ -d "build" ]] && echo 'Yes' || echo 'No')"
     # Don't echo the actual token for security
-    echo "Token is configured: $([[ ! -z "$(deployment_token)" ]] && echo 'Yes' || echo 'No')"
+    echo "Token is configured: $([[ ! -z "$(deployment)" ]] && echo 'Yes' || echo 'No')"
   displayName: 'Verify Deployment Configuration'
 
 - task: AzureStaticWebApp@0
   inputs:
-    azure_static_web_apps_api_token: $(deployment_token)
-    app_location: $(appLocation)
-    output_location: $(outputLocation)
-    api_location: $(apiLocation)
-    skip_app_build: true # Set to true since we're building above
+    azure_static_web_apps_api_token: $(deployment)
+    app_location: '/'
+    output_location: 'build'
+    api_location: ''
+    skip_app_build: true # We're building the app in previous steps
     verbose: true
   displayName: 'Deploy to Azure Static Web App'
-  condition: and(succeeded(), ne(variables['deployment_token'], ''))
+  condition: and(succeeded(), ne(variables['deployment'], ''))
