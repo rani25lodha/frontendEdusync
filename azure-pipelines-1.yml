@@ -70,4 +70,4 @@ steps:
     skip_app_build: true # Set to true since we're building above
     verbose: true
   displayName: 'Deploy to Azure Static Web App'
-  condition: and(succeeded(), ne(variables['deployment_token'], ''))
+  condition: and(succeeded(), ne(variables['deployment'], ''))
