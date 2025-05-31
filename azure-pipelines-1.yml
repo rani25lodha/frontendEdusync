@@ -63,7 +63,7 @@ steps:
 
 - task: AzureStaticWebApp@0
   inputs:
-    azure_static_web_apps_api_token: $(deployment_token)
+    azure_static_web_apps_api_token: $(deployment)
     app_location: $(appLocation)
     output_location: $(outputLocation)
     api_location: $(apiLocation)
