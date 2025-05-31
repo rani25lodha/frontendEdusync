@@ -1,0 +1,13 @@
+**/node_modules/**
+**/.git/**
+**/.vscode/**
+**/test/**
+**/.gitignore
+**/.env
+**/.env.*
+**/package-lock.json
+**/README.md
+**/*.log
+**/coverage/**
+**/build/static/js/*.map
+**/.DS_Store 
