@@ -4,10 +4,15 @@ trigger:
 - main
 
 variables:
-  nodeVersion: '20.x'
-  appLocation: '/' # Root of your app
-  outputLocation: 'build' # React build output directory
-  apiLocation: '' # Leave empty as this is frontend only
+- group: variablesedusync  # Link to the variable group
+- name: nodeVersion
+  value: '20.x'
+- name: appLocation
+  value: '/' # Root of your app
+- name: outputLocation
+  value: 'build' # React build output directory
+- name: apiLocation
+  value: '' # Leave empty as this is frontend only
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -20,7 +25,7 @@ steps:
 
 # Add diagnostic step to verify directory structure
 - script: |
-    echo "Checking repository structure..."
+    echo "Current directory structure:"
     pwd
     ls -la
     echo "Verifying package.json exists..."
@@ -34,8 +39,13 @@ steps:
   displayName: 'List Working Directory'
 
 - script: |
+    echo "Current directory structure:"
+    pwd
+    ls -la
     npm ci
     npm run build
+    echo "Build output structure:"
+    ls -la build/
   displayName: 'npm install and build'
 
 - script: |
