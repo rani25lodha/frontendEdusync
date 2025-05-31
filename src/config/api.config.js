@@ -4,7 +4,7 @@ export const API_CONFIG = {
     ENDPOINTS: {
         AUTH: {
             LOGIN: '/api/Auth/login',
-            REGISTER: '/api/Auth/register',
+            REGISTER: '/api/UserTables',
             FORGOT_PASSWORD: '/api/Auth/forgot-password',
             RESET_PASSWORD: '/api/Auth/reset-password'
         },

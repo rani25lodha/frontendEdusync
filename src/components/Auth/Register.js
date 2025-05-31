@@ -3,7 +3,6 @@ import api from "../../services/api";
 import { useNavigate, Link } from "react-router-dom";
 import { API_CONFIG } from '../../config/api.config';
 
-
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,22 +10,28 @@ function Register() {
   const [role, setRole] = useState("Student");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      await api.post(API_CONFIG.ENDPOINTS.AUTH.REGISTER, {
+      setError("");
+
+      // Create user using UserCreateDto structure
+      const userCreateDto = {
         name,
         email,
-        password,
-        role,
-      });
+        passwordHash: password, // Backend expects passwordHash
+        role
+      };
+
+      await api.post(API_CONFIG.ENDPOINTS.AUTH.REGISTER, userCreateDto);
       alert("Registration successful! You can now log in.");
       navigate("/login");
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Registration failed");
+      console.error("Registration error:", err);
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -44,6 +49,11 @@ function Register() {
         <h2 className="text-center text-primary mb-4">
           Register for EduSync LMS
         </h2>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleRegister}>
           <div className="mb-3">
             <label className="form-label">
