@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
+import { API_CONFIG } from '../../config/api.config';
 
 const InstructorAssessments = () => {
   const instructorId = localStorage.getItem("userId");
@@ -20,7 +21,7 @@ const InstructorAssessments = () => {
     const fetchAssessments = async () => {
       try {
         const response = await api.get(
-          `/AssessmentTables/by-instructor/${instructorId}`
+          `${API_CONFIG.ENDPOINTS.ASSESSMENTS.BY_INSTRUCTOR}/${instructorId}`
         );
         setAssessments(response.data);
       } catch (error) {
