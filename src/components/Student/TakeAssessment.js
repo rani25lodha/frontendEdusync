@@ -114,14 +114,14 @@ const TakeAssessment = () => {
     console.log("Submitting result:", resultDto);
 
     try {
-      const response = await api.post(API_CONFIG.ENDPOINTS.RESULTS.BASE, resultDto);
+      const response = await api.post(API_CONFIG.ENDPOINTS.ASSESSMENTS.RESULTS, resultDto);
       console.log("Result submitted successfully:", response.data);
       alert(
         `Assessment submitted successfully! Your score: ${score}/${totalPossibleMarks} (${Math.round(
           (score / totalPossibleMarks) * 100
         )}%)`
       );
-      navigate("/results");
+      navigate("/student/results");
     } catch (error) {
       console.error("Error submitting result:", error);
       alert("Failed to submit assessment.");
