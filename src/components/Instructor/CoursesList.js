@@ -42,21 +42,6 @@ const InstructorCourseList = () => {
     fetchCourses();
   }, []);
 
-  const handleDelete = async (courseId) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      try {
-        await api.delete(`${API_CONFIG.ENDPOINTS.COURSES.BASE}/${courseId}`);
-        setCourses((prev) =>
-          prev.filter((course) => course.courseId !== courseId)
-        );
-        alert("Course deleted successfully!");
-      } catch (err) {
-        console.error("Failed to delete course", err);
-        alert("Failed to delete course. Please try again.");
-      }
-    }
-  };
-
   const handleEdit = (course) => {
     setEditingCourse(course);
     setFormData({
@@ -364,12 +349,6 @@ const InstructorCourseList = () => {
                       onClick={() => handleEdit(course)}
                     >
                       ✏️ Edit
-                    </button>
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() => handleDelete(course.courseId)}
-                    >
-                      🗑️ Delete
                     </button>
                   </div>
                 </div>
